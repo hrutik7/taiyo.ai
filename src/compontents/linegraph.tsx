@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { Line } from "react-chartjs-2";
 import axios from "axios";
 import { Chart, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from "chart.js";
-
-const ChartJS: typeof Chart = (window as any).Chart;
 import { useQuery } from "@tanstack/react-query";
+const ChartJS: typeof Chart = (window as any).Chart;
+
 
 // Register necessary components for Chart.js
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);

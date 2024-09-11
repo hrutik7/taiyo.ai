@@ -1,28 +1,13 @@
 import React, { useState } from "react";
 import { Line } from "react-chartjs-2";
 import axios from "axios";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
+import { Chart, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from "chart.js";
+
+const ChartJS: typeof Chart = Chart;
 import { useQuery } from "@tanstack/react-query";
 
 // Register necessary components for Chart.js
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-);
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 // Function to fetch COVID data
 const fetchHistoricalData = async () => {
@@ -33,35 +18,7 @@ const fetchHistoricalData = async () => {
 };
 
 const CovidLineGraph = () => {
-  const [chartOptions, setChartOptions] = useState<{
-    plugins: {
-      legend: {
-        position:
-          | "top"
-          | "left"
-          | "right"
-          | "bottom"
-          | "center"
-          | "chartArea"
-          | undefined;
-      };
-      title: {
-        display: boolean;
-        text: string;
-      };
-    };
-    responsive?: boolean; // Add the 'responsive' property as optional
-  }>({
-    plugins: {
-      legend: {
-        position: "top",
-      },
-      title: {
-        display: true,
-        text: "COVID-19 Cases Fluctuations Over the Last 30 Days",
-      },
-    },
-  });
+  const [chartOptions, setChartOptions] = useState<ChartJS.ChartOptions>({} as ChartJS.ChartOptions);
 
   // Use TanStack Query to fetch the historical data
   const { data, isLoading, error } = useQuery({
@@ -108,10 +65,11 @@ const CovidLineGraph = () => {
     ],
   };
 
-  // Set chart options
+  // Set chart options for responsiveness
   if (!chartOptions.plugins) {
     setChartOptions({
       responsive: true,
+      maintainAspectRatio: false, // Allows the chart to dynamically resize
       plugins: {
         legend: {
           position: "top",
@@ -121,11 +79,25 @@ const CovidLineGraph = () => {
           text: "COVID-19 Cases Fluctuations Over the Last 30 Days",
         },
       },
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: "Date",
+          },
+        },
+        y: {
+          title: {
+            display: true,
+            text: "Number of Cases",
+          },
+        },
+      },
     });
   }
 
   return (
-    <div>
+    <div style={{ height: "60vh", width: "100%" }}>
       <Line data={chartData} options={chartOptions} />
     </div>
   );

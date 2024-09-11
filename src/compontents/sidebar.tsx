@@ -7,7 +7,7 @@ const Sidebar: React.FC = () => {
   const menuItems = ["contact", "Charts and maps"];
 
   return (
-    <div className="w-64 px-5  border font-sans h-screen bg-white text-gray-900">
+    <div className="md:w-64 w-32 px-5  border font-sans h-screen bg-white text-gray-900">
       <div className="p-4 text-xl font-bold"></div>
       <ul className="mt-6 flex flex-col gap-5">
         {menuItems.map((item) => (

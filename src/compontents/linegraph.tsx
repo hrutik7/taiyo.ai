@@ -7,7 +7,7 @@ const ChartJS: typeof Chart = (window as any).Chart;
 
 
 // Register necessary components for Chart.js
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS?.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 // Function to fetch COVID data
 const fetchHistoricalData = async () => {

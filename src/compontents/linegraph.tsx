@@ -1,13 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Line } from "react-chartjs-2";
 import axios from "axios";
-import { Chart, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from "chart.js";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
 import { useQuery } from "@tanstack/react-query";
-const ChartJS: typeof Chart = (window as any).Chart;
-
+import { Chart } from "chart.js";
 
 // Register necessary components for Chart.js
-ChartJS?.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 // Function to fetch COVID data
 const fetchHistoricalData = async () => {
@@ -18,7 +26,8 @@ const fetchHistoricalData = async () => {
 };
 
 const CovidLineGraph = () => {
-  const [chartOptions, setChartOptions] = useState<any>({} as any);
+  const chartRef = useRef<any>(null); // Reference for the chart instance
+  const [chartOptions, setChartOptions] = useState({});
 
   // Use TanStack Query to fetch the historical data
   const { data, isLoading, error } = useQuery({
@@ -26,6 +35,46 @@ const CovidLineGraph = () => {
     queryFn: fetchHistoricalData,
   });
 
+  useEffect(() => {
+    (chartRef.current as ChartJS | null)?.destroy?.(); // Destroy existing chart instance before creating a new one
+  }, [data]);
+  // Set chart options for responsiveness
+  useEffect(() => {
+    setChartOptions({
+      responsive: true,
+      maintainAspectRatio: false, // Allows the chart to dynamically resize
+      plugins: {
+        legend: {
+          position: "top",
+        },
+        title: {
+          display: true,
+          text: "COVID-19 Cases Fluctuations Over the Last 30 Days",
+        },
+      },
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: "Date",
+          },
+        },
+        y: {
+          title: {
+            display: true,
+            text: "Number of Cases",
+          },
+        },
+      },
+    });
+
+    // Cleanup function to destroy chart instance if the component unmounts or re-renders
+    return () => {
+      if (chartRef.current) {
+        chartRef.current.destroy();
+      }
+    };
+  }, [data]);
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading data...</div>;
 
@@ -65,40 +114,11 @@ const CovidLineGraph = () => {
     ],
   };
 
-  // Set chart options for responsiveness
-  if (!chartOptions.plugins) {
-    setChartOptions({
-      responsive: true,
-      maintainAspectRatio: false, // Allows the chart to dynamically resize
-      plugins: {
-        legend: {
-          position: "top",
-        },
-        title: {
-          display: true,
-          text: "COVID-19 Cases Fluctuations Over the Last 30 Days",
-        },
-      },
-      scales: {
-        x: {
-          title: {
-            display: true,
-            text: "Date",
-          },
-        },
-        y: {
-          title: {
-            display: true,
-            text: "Number of Cases",
-          },
-        },
-      },
-    });
-  }
+
 
   return (
     <div style={{ height: "60vh", width: "100%" }}>
-      <Line data={chartData} options={chartOptions} />
+      <Line ref={chartRef} data={chartData} options={chartOptions} />
     </div>
   );
 };

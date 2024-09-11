@@ -1,26 +1,15 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
+    "jsx": "react-jsx", // Ensure React JSX is set up
+    "esModuleInterop": true, 
+    "module": "commonjs", // Jest works better with CommonJS in Node.js environment
     "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx"
+    "isolatedModules": true, 
+    "target": "ES2017" 
   },
-  "include": [
-    "src"
-  ]
+  "exclude": [
+    "node_modules",
+    "build"
+  ],
+  "include": ["src/**/*"]
 }

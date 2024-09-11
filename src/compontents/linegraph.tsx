@@ -3,7 +3,7 @@ import { Line } from "react-chartjs-2";
 import axios from "axios";
 import { Chart, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from "chart.js";
 
-const ChartJS: typeof Chart = Chart;
+const ChartJS: typeof Chart = (window as any).Chart;
 import { useQuery } from "@tanstack/react-query";
 
 // Register necessary components for Chart.js
@@ -18,7 +18,7 @@ const fetchHistoricalData = async () => {
 };
 
 const CovidLineGraph = () => {
-  const [chartOptions, setChartOptions] = useState<ChartJS.ChartOptions>({} as ChartJS.ChartOptions);
+  const [chartOptions, setChartOptions] = useState<any>({} as any);
 
   // Use TanStack Query to fetch the historical data
   const { data, isLoading, error } = useQuery({

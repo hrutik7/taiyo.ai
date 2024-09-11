@@ -12,7 +12,6 @@ import {
   Legend,
 } from "chart.js";
 import { useQuery } from "@tanstack/react-query";
-import { Chart } from "chart.js";
 
 // Register necessary components for Chart.js
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
@@ -28,6 +27,7 @@ const fetchHistoricalData = async () => {
 const CovidLineGraph = () => {
   const chartRef = useRef<any>(null); // Reference for the chart instance
   const [chartOptions, setChartOptions] = useState({});
+  const [isMounted, setIsMounted] = useState(false); // Track if component is mounted
 
   // Use TanStack Query to fetch the historical data
   const { data, isLoading, error } = useQuery({
@@ -36,10 +36,13 @@ const CovidLineGraph = () => {
   });
 
   useEffect(() => {
-    (chartRef.current as ChartJS | null)?.destroy?.(); // Destroy existing chart instance before creating a new one
-  }, [data]);
+    setIsMounted(true); // Component has mounted (client-side)
+  }, []);
+
   // Set chart options for responsiveness
   useEffect(() => {
+    if (!data || !isMounted) return;
+
     setChartOptions({
       responsive: true,
       maintainAspectRatio: false, // Allows the chart to dynamically resize
@@ -74,7 +77,8 @@ const CovidLineGraph = () => {
         chartRef.current.destroy();
       }
     };
-  }, [data]);
+  }, [data, isMounted]);
+
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading data...</div>;
 
@@ -83,7 +87,6 @@ const CovidLineGraph = () => {
   const cases = Object.values(data.cases);
   const recovered = Object.values(data.recovered);
   const deaths = Object.values(data.deaths);
-  const isBrowser = typeof window !== 'undefined';
 
   const chartData = {
     labels: dates,
@@ -115,13 +118,9 @@ const CovidLineGraph = () => {
     ],
   };
 
-
-
   return (
     <div style={{ height: "60vh", width: "100%" }}>
-    {
-        isBrowser && <Line ref={chartRef} data={chartData} options={chartOptions} />
-    }
+      {isMounted && <Line ref={chartRef} data={chartData} options={chartOptions} />}
     </div>
   );
 };

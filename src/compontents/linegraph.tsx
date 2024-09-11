@@ -83,6 +83,7 @@ const CovidLineGraph = () => {
   const cases = Object.values(data.cases);
   const recovered = Object.values(data.recovered);
   const deaths = Object.values(data.deaths);
+  const isBrowser = typeof window !== 'undefined';
 
   const chartData = {
     labels: dates,
@@ -118,7 +119,9 @@ const CovidLineGraph = () => {
 
   return (
     <div style={{ height: "60vh", width: "100%" }}>
-      <Line ref={chartRef} data={chartData} options={chartOptions} />
+    {
+        isBrowser && <Line ref={chartRef} data={chartData} options={chartOptions} />
+    }
     </div>
   );
 };

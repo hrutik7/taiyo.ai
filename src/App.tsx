@@ -1,26 +1,54 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { ReactNode } from "react";
+import Sidebar from "./compontents/sidebar";
+import Navbar from "./compontents/navbar";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { RecoilRoot, useRecoilValue } from "recoil";
+import { routestate } from "./atom/routeatom";
+import Contactpage from "./compontents/contactpage";
+import Graphpage from "./compontents/graphpage";
+import "leaflet/dist/leaflet.css";
 
-function App() {
+const queryClient = new QueryClient();
+
+// Layout component with children prop
+interface LayoutProps {
+  children: ReactNode;
+}
+
+const Layout: React.FC = () => {
+  const routeValue = useRecoilValue(routestate);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="flex flex-col">
+      <Navbar />
+      <div className="flex">
+        <Sidebar />
+        {/* <div className="flex-1 justify-center flex flex-col">
+          <main className="p-6 flex-1">{children}</main>
+          dkdnsk
+        </div> */}
+        {routeValue === "contact" ? (
+          <div className="w-[100%] flex justify-center text-center">
+            <Contactpage />
+          </div>
+        ) : (
+          <div className=" w-[100%]">
+            <Graphpage />
+          </div>
+        )}
+      </div>
     </div>
   );
-}
+};
+
+// App component
+const App: React.FC = () => {
+  return (
+    <RecoilRoot>
+      <QueryClientProvider client={queryClient}>
+        <Layout />
+      </QueryClientProvider>
+    </RecoilRoot>
+  );
+};
 
 export default App;
